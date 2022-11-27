@@ -1,3 +1,4 @@
+//Login exceptions
 class UserNotFoundAuthException implements Exception {
 
 }
@@ -13,10 +14,6 @@ class EmailAlreadyInUseAuthException implements Exception {
   
 }
 class InvalidEmailAuthException implements Exception {
-  
-}
-//Both exceptions
-class EmptyPasswordAuthException implements Exception {
   
 }
 
