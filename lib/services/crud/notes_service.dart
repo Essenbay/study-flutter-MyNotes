@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' show join;
@@ -10,14 +11,19 @@ class NotesService {
   Database? _db;
 
   List<DatabaseNote> _notes = [];
-  final _notesStreamController =
-      StreamController<List<DatabaseNote>>.broadcast();
-
-  static final NotesService _shared = NotesService._sharedInstance();
-  NotesService._sharedInstance();
-  factory NotesService() => _shared;
   
-  Stream<List<DatabaseNote>> get allNotes =>_notesStreamController.stream;
+  late final StreamController<List<DatabaseNote>> _notesStreamController;
+  static final NotesService _shared = NotesService._sharedInstance();
+  NotesService._sharedInstance(){
+    _notesStreamController = StreamController<List<DatabaseNote>>.broadcast(
+      onListen: () {
+        _notesStreamController.sink.add(_notes);
+      },
+    );
+  }
+  factory NotesService() => _shared;
+
+  Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
 
   Future<DatabaseUser> getOrCreateUser({required String email}) async {
     try {
@@ -221,7 +227,8 @@ class NotesService {
     }
   }
 
-  Future<DatabaseNote> updateNote({required DatabaseNote note, required String text}) async {
+  Future<DatabaseNote> updateNote(
+      {required DatabaseNote note, required String text}) async {
     await _ensureDBIsOpen();
     final db = _getDatabaseOrThrow();
     //Make sure note exists
@@ -244,7 +251,7 @@ class NotesService {
     }
   }
 }
-
+@immutable
 class DatabaseUser {
   final int id;
   final String email;

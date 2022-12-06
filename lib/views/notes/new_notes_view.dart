@@ -3,10 +3,10 @@ import 'package:mynote/services/auth/auth_service.dart';
 import 'package:mynote/services/crud/notes_service.dart';
 
 class NewNoteView extends StatefulWidget {
-  const NewNoteView({super.key});
+  const NewNoteView({Key? key}) : super(key: key);
 
   @override
-  State<NewNoteView> createState() => _NewNoteViewState();
+  _NewNoteViewState createState() => _NewNoteViewState();
 }
 
 class _NewNoteViewState extends State<NewNoteView> {
@@ -21,26 +21,20 @@ class _NewNoteViewState extends State<NewNoteView> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    _deleteNoteIfTextIsEmpty();
-    _saveNoteIfTextNotEmpty();
-    _textController.dispose();
-    super.dispose();
-  }
-
   void _textControllerListener() async {
     final note = _note;
     if (note == null) {
       return;
     }
     final text = _textController.text;
-    await _notesService.updateNote(note: note, text: text);
+    await _notesService.updateNote(
+      note: note,
+      text: text,
+    );
   }
 
   void _setupTextControllerListener() {
     _textController.removeListener(_textControllerListener);
-    //If was called multiple times add listener back
     _textController.addListener(_textControllerListener);
   }
 
@@ -65,16 +59,27 @@ class _NewNoteViewState extends State<NewNoteView> {
   void _saveNoteIfTextNotEmpty() async {
     final note = _note;
     final text = _textController.text;
-    if (text.isNotEmpty && note != null) {
-      await _notesService.updateNote(note: note, text: text);
+    if (note != null && text.isNotEmpty) {
+      await _notesService.updateNote(
+        note: note,
+        text: text,
+      );
     }
+  }
+
+  @override
+  void dispose() {
+    _deleteNoteIfTextIsEmpty();
+    _saveNoteIfTextNotEmpty();
+    _textController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New note'),
+        title: const Text('New Note'),
       ),
       body: FutureBuilder(
         future: createNewNote(),
@@ -86,9 +91,9 @@ class _NewNoteViewState extends State<NewNoteView> {
               return TextField(
                 controller: _textController,
                 keyboardType: TextInputType.multiline,
-                maxLength: null,
+                maxLines: null,
                 decoration: const InputDecoration(
-                  hintText: 'Start typing your note...'
+                  hintText: 'Start typing your note...',
                 ),
               );
             default:
