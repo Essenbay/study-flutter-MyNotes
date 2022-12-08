@@ -4,7 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:mynote/services/auth/auth_service.dart';
 import 'package:mynote/services/cloud/cloud_note.dart';
 import 'package:mynote/services/crud/notes_service.dart';
-import 'package:mynote/views/utilities/delete_dialog.dart';
+import 'package:mynote/utilities/dialogs/delete_dialog.dart';
 
 import '../../constants/routes.dart';
 import '../../enums/menu_action.dart';
