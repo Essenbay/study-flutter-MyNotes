@@ -28,14 +28,16 @@ void main() {
     test('Create user should delegate to logIn function', () async {
       final wrongEmailUser =
           provider.createUser(email: 'foo@bar.com', password: 'anypassword');
-      expect(wrongEmailUser, throwsA(const TypeMatcher<UserNotFoundAuthException>()));
+      expect(wrongEmailUser,
+          throwsA(const TypeMatcher<UserNotFoundAuthException>()));
       final occupiedEmailUser = provider.createUser(
           email: 'alreadyinuse@bar.com', password: 'anypassword');
       expect(occupiedEmailUser,
           throwsA(const TypeMatcher<EmailAlreadyInUseAuthException>()));
       final badPassword =
           provider.createUser(email: 'anyemail@bar.com', password: 'foobar');
-      expect(badPassword, throwsA(const TypeMatcher<WrongPasswordAuthException>()));
+      expect(badPassword,
+          throwsA(const TypeMatcher<WrongPasswordAuthException>()));
       final user = await provider.createUser(
           email: 'anyemail@bar.com', password: 'anypassword');
       expect(provider.currentUser, user);
@@ -89,7 +91,8 @@ class MockAuthProvider implements AuthProvider {
     if (email == 'foo@bar.com') throw UserNotFoundAuthException();
     if (email == 'alreadyinuse@bar.com') throw EmailAlreadyInUseAuthException();
     if (password == 'foobar') throw WrongPasswordAuthException();
-    const user = AuthUser(email: 'foo@bar.com ', isEmailVerified: false);
+    const user =
+        AuthUser(id: 'my_id', email: 'foo@bar.com ', isEmailVerified: false);
     _user = user;
     return Future.value(user);
   }
@@ -107,7 +110,8 @@ class MockAuthProvider implements AuthProvider {
     if (!isInitialiazed) throw NotInitializedException();
     final user = _user;
     if (user == null) throw UserNotFoundAuthException();
-    const newUser = AuthUser(email: 'foo@bar.com', isEmailVerified: true);
+    const newUser =
+        AuthUser(id: 'my_id', email: 'foo@bar.com', isEmailVerified: true);
     _user = newUser;
   }
 }
